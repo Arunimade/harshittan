@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="eventPlannerApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HV Events</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="js/app.js"></script>
+</head>
+<body ng-controller="MainController">
+
+    <!-- Welcome Section -->
+    <header class="header">
+        <div class="logo">
+            <h1>HV Events</h1>
+        </div>
+        <div class="nav-bar">
+            <ul>
+                <li><a href="#" ng-click="setActiveSection('home')">Home</a></li>
+                <li><a href="#" ng-click="setActiveSection('about')">About Us</a></li>
+                <li><a href="#" ng-click="setActiveSection('food')">Food</a></li>
+                <li><a href="#" ng-click="setActiveSection('venue')">Venue</a></li>
+                <li><a href="#" ng-click="setActiveSection('contact')">Contact Us</a></li>
+                <li><a href="#" ng-click="setActiveSection('cart')">Cart</a></li>
+            </ul>
+        </div>
+        <div class="greeting" ng-if="user.name">
+            <h3>Hello, {{user.name}}</h3>
+        </div>
+    </header>
+
+    <!-- Username Greeting -->
+<div class="user-greeting" ng-show="loggedIn">
+    <p>Hello, {{username}}!</p>
+</div>
+
+<!-- Login Popup -->
+<div class="login-popup" ng-show="!loggedIn">
+    <h2>Login</h2>
+    <form ng-submit="login()">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" ng-model="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" ng-model="password" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" ng-model="email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" ng-model="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" ng-model="location" required>
+        </div>
+        <button type="submit" class="login-button">Login</button>
+    </form>
+</div>
+
+
+    <!-- Home Section -->
+<section ng-show="activeSection === 'home'" class="section home-section">
+    <h2>Welcome to HV Events</h2>
+    <p>Your one-stop solution for all event planning needs!</p>
+    
+    <!-- Image Slider -->
+    <div class="slider">
+        <img ng-src="{{images[currentImageIndex]}}" alt="Event Image" class="slider-image">
+    </div>
+</section>
+
+    <!-- About Us Section -->
+<section ng-show="activeSection === 'about'" class="section about-us-section">
+    <h2>About Us</h2>
+    <p>Welcome to HV Events! We specialize in planning and hosting unforgettable events. Here's a glimpse of some of the amazing events we've had the privilege to organize:</p>
+    
+    <div class="event-gallery">
+        <div class="event-image" ng-repeat="event in hostedEvents">
+            <img ng-src="{{event.image}}" alt="{{event.name}}">
+            <p>{{event.name}}</p>
+        </div>
+    </div>
+</section>
+
+    <!-- Food Section -->
+<section ng-show="activeSection === 'food'" class="section food-section">
+    <h2>Select Food</h2>
+    <div class="food-container">
+        <div class="food-selection">
+            <h3>Select Food Type</h3>
+            <ul>
+                <li>
+                    <input type="radio" ng-model="selectedFoodType" ng-value="'vegStarters'" ng-change="toggleFoodItems('vegStarters')"> 
+                    Veg Starters
+                </li>
+                <li>
+                    <input type="radio" ng-model="selectedFoodType" ng-value="'nonVegStarters'" ng-change="toggleFoodItems('nonVegStarters')"> 
+                    Non-Veg Starters
+                </li>
+                <li>
+                    <input type="radio" ng-model="selectedFoodType" ng-value="'drinks'" ng-change="toggleFoodItems('drinks')"> 
+                    Drinks
+                </li>
+                <li>
+                    <input type="radio" ng-model="selectedFoodType" ng-value="'desserts'" ng-change="toggleFoodItems('desserts')"> 
+                    Desserts
+                </li>
+                <li>
+                    <input type="radio" ng-model="selectedFoodType" ng-value="'iceCreams'" ng-change="toggleFoodItems('iceCreams')"> 
+                    Ice Creams
+                </li>
+                <li>
+                    <input type="radio" ng-model="selectedFoodType" ng-value="'vegMainCourse'" ng-change="toggleFoodItems('vegMainCourse')"> 
+                    Veg Main Course
+                </li>
+                <li>
+                    <input type="radio" ng-model="selectedFoodType" ng-value="'nonVegMainCourse'" ng-change="toggleFoodItems('nonVegMainCourse')"> 
+                    Non-Veg Main Course
+                </li>
+                <li>
+                    <input type="radio" ng-model="selectedFoodType" ng-value="'extraSupplies'" ng-change="toggleFoodItems('extraSupplies')"> 
+                    Extra Supplies
+                </li>
+            </ul>
+        </div>
+
+        <div class="food-items" ng-show="activeFoodItems">
+            <h3 ng-bind="activeFoodItems.title"></h3>
+            <ul>
+                <li ng-repeat="item in activeFoodItems.items">
+                    <img ng-src="{{item.image}}" alt="{{item.name}}" class="food-image">
+                    <p>Name: {{item.name}}</p>
+                    <p>Price per plate: ₹{{item.price}}</p>
+                    <input type="number" ng-model="item.plates" placeholder="Number of plates" min="0">
+                    <button ng-click="addToCart(item)">Add to Cart</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+    <!-- Venue Section -->
+<section ng-show="activeSection === 'venue'" class="section venue-section">
+    <h2>Select Venue</h2>
+
+    <div>
+        <label for="location">Select Location:</label>
+        <select id="location" ng-model="selectedLocation" ng-change="loadVenues(selectedLocation)">
+            <option value="jodhpur">Jodhpur</option>
+            <option value="mumbai">Mumbai</option>
+            <option value="jaipur">Jaipur</option>
+        </select>
+    </div>
+
+    <!-- Date Selection -->
+    <div class="date-selection">
+        <label>Start Date:</label>
+        <input type="date" ng-model="startDate" ng-change="calculateDays()">
+        
+        <label>End Date:</label>
+        <input type="date" ng-model="endDate" ng-change="calculateDays()">
+        
+        <p>Total Days: {{totalDays}}</p>
+    </div>
+
+    <!-- Venue Table -->
+    <table class="venue-table" ng-show="venues.length > 0">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Venue Name</th>
+                <th>Price per Day</th>
+                <th>Add to Cart</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="venue in venues">
+                <td><img ng-src="{{venue.image}}" alt="{{venue.name}}" class="venue-image"></td>
+                <td>{{venue.name}}</td>
+                <td>₹{{venue.price}}</td>
+                <td>
+                    <button ng-click="addVenueToCart(venue)">Add to Cart</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <p ng-show="venues.length === 0">No venues available for the selected location.</p>
+</section>
+
+    <!-- Contact Section -->
+    <section ng-show="activeSection === 'contact'" class="section contact-section">
+        <h2>Contact Us</h2>
+        <p>For inquiries, please reach out!</p>
+    </section>
+
+    <!-- Cart Section -->
+<section ng-show="activeSection === 'cart'" class="section cart-section">
+    <h2>Your Cart</h2>
+
+    <table class="cart-table" ng-show="cart.length > 0">
+        <thead>
+            <tr>
+                <th>Item Type</th>
+                <th>Item Name</th>
+                <th>Price per Unit</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in cart">
+                <td>{{item.type}}</td>
+                <td>{{item.name}}</td>
+                <td>${{item.unitPrice}}</td>
+                <td>{{item.quantity}}</td>
+                <td>${{item.totalPrice}}</td>
+                <td><button ng-click="removeFromCart($index)">Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p ng-show="cart.length === 0">Your cart is empty.</p>
+
+    <div ng-show="cart.length > 0" class="cart-summary">
+        <p>Total Amount: ${{calculateTotal()}}</p>
+        <button ng-click="checkout()">Checkout</button>
+    </div>
+</section>
+<!-- Loading Screen -->
+<div id="loading" class="loading-screen">
+    <div class="loader">Loading...</div>
+</div>
+
+
+
+
+    <footer class="footer">
+        <p>&copy; 2024 HV Events. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
